@@ -41,7 +41,7 @@ Scroller.prototype._getWrapper = function(el) {
  * @private
  */
 Scroller.prototype._init = function() {
-  this._scrollPosition = 0;
+  this._scrollPosition = this._scrollerAt = 0;
   this._build();
   this._bindEvents();
   this._setDimensions();
@@ -95,9 +95,20 @@ Scroller.prototype._setDimensions = function() {
  */
 Scroller.prototype._onMouseWheel = function(e) {
   e.preventDefault();
+  //calculate position from mouse delta
   var deltaY = e.wheelDeltaY / 3; //TODO fix for win/ff/opera etc
   this._scrollPosition += deltaY;
 
+  this._doScroll();
+};
+
+
+/**
+ * Main scroll function
+ * @function
+ * @private
+ */
+Scroller.prototype._doScroll = function() {
   if (this._scrollPosition >  1) {
     this._scrollPosition = 1;
   }
@@ -119,8 +130,8 @@ Scroller.prototype._onMouseWheel = function(e) {
 Scroller.prototype._setScrollerPosition = function() {
   var percentageScrolled = Math.round(this._scrollPosition / this._scrollMax * 100);
   if (percentageScrolled > 100) { percentageScrolled = 100; }
-  var scrollerTo = this._scrollerSpace / 100 * percentageScrolled;
-  this._scroller.style.top = scrollerTo + 'px';
+  this._scrollerAt = this._scrollerSpace / 100 * percentageScrolled;
+  this._scroller.style.top = this._scrollerAt + 'px';
 };
 
 
@@ -134,6 +145,61 @@ Scroller.prototype._bindEvents = function() {
   this._el.addEventListener('mousewheel', function(e) {
     self._onMouseWheel(e);
   }, false);
+  this._scroller.addEventListener('mousedown', function(e) {
+    self._startDragScroller(e);
+  }, false);
+};
+
+
+/**
+ * Called when scroller drag is started, binds mouve and mousup events
+ * @param  {Event} e Mouse event
+ * @function
+ * @private
+ */
+Scroller.prototype._startDragScroller = function(e) {
+  e.preventDefault();
+  // Get initial Y position
+  this._startY = this._scroller.offsetTop;
+  // get initial mouse position
+  this._initialMouseY = e.clientY;
+  var self = this;
+  this.listener = function() {
+    self._doMoveMouse();
+  };
+  window.addEventListener('mousemove', this.listener, false);
+  window.addEventListener('mouseup', self._endMoveMouse.bind(this), false);
+};
+
+
+/**
+ * Called on mouse move of scroller
+ * @function
+ * @private
+ */
+Scroller.prototype._doMoveMouse = function() {
+  var e = window.event;
+  // Get moved distance
+  var dY = e.clientY - this._initialMouseY;
+  // Get scroller position
+  this._scrollerAt = dY + this._startY;
+  // Percentage of scroller position in relation to total space
+  var percentageScrolled = this._scrollerAt / this._scrollerSpace * 100;
+  // Use this to calculate the new position of the main content
+  this._scrollPosition = -1 * (Math.abs(this._scrollMax) / 100 * percentageScrolled);
+  // Run main scroll function
+  this._doScroll();
+};
+
+
+/**
+ * Called when move move stopped, removes event listeners
+ * @param  {Event} e Mouse up event
+ * @function
+ * @private
+ */
+Scroller.prototype._endMoveMouse = function(e) {
+  window.removeEventListener('mousemove', this.listener, false);
 };
 
 
