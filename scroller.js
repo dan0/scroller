@@ -9,6 +9,7 @@ function Scroller(el, options) {
 
 }
 
+
 Scroller.prototype._getWrapper = function(el) {
   if (typeof el === 'string') {
     if (el.charAt(0) === '#') {
@@ -26,11 +27,14 @@ Scroller.prototype._getWrapper = function(el) {
   } 
 };
 
+
 Scroller.prototype._init = function() {
+  this._scrollPosition = 0;
   this._build();
   this._bindEvents();
   this._setDimensions();
 };
+
 
 Scroller.prototype._build = function() {
   this._scrollbar = document.createElement('div');
@@ -38,19 +42,44 @@ Scroller.prototype._build = function() {
   this._scroller = document.createElement('div');
   this._scroller.className = 'scroll-inner';
 
+  this._innerPane = this._el.querySelector('.inner');
+  
+
   this._scrollbar.appendChild(this._scroller);
   this._el.appendChild(this._scrollbar);
 
 };
 
+
 Scroller.prototype._setDimensions = function() {
-  this._totalHeight = this._scrollbar.offsetHeight;
+  this._elHeight = this._el.offsetHeight;
+  this._scrollbarHeight = this._scrollbar.offsetHeight;
+  this._contentHeight = this._innerPane.offsetHeight;
+  this._scrollMax = this._elHeight - this._contentHeight;
+
+  // find ratio of visible content
+  var visibleRatio = this._elHeight / this._contentHeight;
+  // Set height of scroller element to indicate visible ratio
+  this._scroller.style.height = this._scrollbarHeight * visibleRatio + 'px';
 };
+
 
 Scroller.prototype._onMouseWheel = function(e) {
   e.preventDefault();
-  console.log(e);
+  var deltaY = e.wheelDeltaY / 3; //TODO fix for win/ff/opera etc
+  this._scrollPosition += deltaY;
+
+  if (this._scrollPosition >  1) {
+    this._scrollPosition = 1;
+  }
+
+  if (this._scrollPosition < this._scrollMax) {
+    this._scrollPosition = this._scrollMax;
+  }
+
+  this._innerPane.style.top = this._scrollPosition + 'px';
 };
+
 
 Scroller.prototype._bindEvents = function() {
   var self = this;
@@ -58,3 +87,11 @@ Scroller.prototype._bindEvents = function() {
     self._onMouseWheel(e);
   }, false);
 };
+
+
+Scroller.prototype.resize = function() {
+  this._setDimensions();
+};
+
+
+

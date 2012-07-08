@@ -13,6 +13,7 @@ body {
 
 .scroller > .inner {
   padding: 10px;
+  position: absolute;
 }
 
 .scroller .scrollbar {
