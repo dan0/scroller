@@ -23,8 +23,21 @@ body {
   top: 5px;
   bottom: 5px;
   right: 5px;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0,0,0,0);
+  opacity: 0;
+  -webkit-transition: opacity 200ms ease-in-out;
+  -moz-transition: opacity 200ms ease-in-out;
+  -ms-transition: opacity 200ms ease-in-out;
+  -o-transition: opacity 200ms ease-in-out;
+  transition: opacity 200ms ease-in-out;
 }
+
+.scroller:hover .scrollbar {
+  opacity: 1;
+}
+
+
+
 
 .scrollbar .scroll-inner {
   width: 6px;

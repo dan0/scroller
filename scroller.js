@@ -1,7 +1,7 @@
 /**
  * Lion-esque scroller
+ * @constructor
  */
-
 function Scroller(el, options) {
 
   this._el = this._getWrapper(el);
@@ -10,6 +10,13 @@ function Scroller(el, options) {
 }
 
 
+/**
+ * Get wrapper element for scroller
+ * @param  {Object|String} el Element selector or object.
+ * @return {Object} Wrapper element.
+ * @function
+ * @private
+ */ 
 Scroller.prototype._getWrapper = function(el) {
   if (typeof el === 'string') {
     if (el.charAt(0) === '#') {
@@ -28,6 +35,11 @@ Scroller.prototype._getWrapper = function(el) {
 };
 
 
+/**
+ * Initialise Scroller
+ * @function
+ * @private
+ */
 Scroller.prototype._init = function() {
   this._scrollPosition = 0;
   this._build();
@@ -36,6 +48,11 @@ Scroller.prototype._init = function() {
 };
 
 
+/**
+ * Build requires html nodes
+ * @function
+ * @private
+ */
 Scroller.prototype._build = function() {
   this._scrollbar = document.createElement('div');
   this._scrollbar.className = 'scrollbar';
@@ -51,6 +68,11 @@ Scroller.prototype._build = function() {
 };
 
 
+/**
+ * Set required dimensions for scroller
+ * @function
+ * @private
+ */
 Scroller.prototype._setDimensions = function() {
   this._elHeight = this._el.offsetHeight;
   this._scrollbarHeight = this._scrollbar.offsetHeight;
@@ -61,9 +83,16 @@ Scroller.prototype._setDimensions = function() {
   var visibleRatio = this._elHeight / this._contentHeight;
   // Set height of scroller element to indicate visible ratio
   this._scroller.style.height = this._scrollbarHeight * visibleRatio + 'px';
+  this._scrollerSpace = this._scrollbarHeight - this._scroller.offsetHeight;
 };
 
 
+/**
+ * Handle mousewheel event
+ * @param  {Event} e Event object
+ * @function
+ * @private
+ */
 Scroller.prototype._onMouseWheel = function(e) {
   e.preventDefault();
   var deltaY = e.wheelDeltaY / 3; //TODO fix for win/ff/opera etc
@@ -78,9 +107,28 @@ Scroller.prototype._onMouseWheel = function(e) {
   }
 
   this._innerPane.style.top = this._scrollPosition + 'px';
+  this._setScrollerPosition();
 };
 
 
+/**
+ * Set position of scroller element
+ * @function
+ * @private
+ */
+Scroller.prototype._setScrollerPosition = function() {
+  var percentageScrolled = Math.round(this._scrollPosition / this._scrollMax * 100);
+  if (percentageScrolled > 100) { percentageScrolled = 100; }
+  var scrollerTo = this._scrollerSpace / 100 * percentageScrolled;
+  this._scroller.style.top = scrollerTo + 'px';
+};
+
+
+/**
+ * Bind necessary events on dom nodes
+ * @function
+ * @private
+ */
 Scroller.prototype._bindEvents = function() {
   var self = this;
   this._el.addEventListener('mousewheel', function(e) {
@@ -89,6 +137,11 @@ Scroller.prototype._bindEvents = function() {
 };
 
 
+/**
+ * Resize elements (e.g. when content height changes)
+ * @function
+ * @public
+ */
 Scroller.prototype.resize = function() {
   this._setDimensions();
 };
