@@ -1,0 +1,35 @@
+body {
+  font-family: sans-serif;
+}
+
+.scroller {
+  margin: 20px;
+  border: 1px solid #ccc;
+  width: 300px;
+  height: 300px;
+  overflow: hidden;
+  position: relative;
+}
+
+.scroller > .inner {
+  padding: 10px;
+}
+
+.scroller .scrollbar {
+  width: 6px;
+  border-radius: 3px;
+  position: absolute;
+  top: 5px;
+  bottom: 5px;
+  right: 5px;
+  background: rgba(0,0,0,0.5);
+}
+
+.scrollbar .scroll-inner {
+  width: 6px;
+  height: 20px;
+  border-radius: 3px;
+  position: absolute;
+  top: 0px;
+  background: rgba(0,0,0,0.8);
+}
