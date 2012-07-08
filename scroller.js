@@ -223,6 +223,10 @@ Scroller.prototype._handleBarClick = function(e) {
 };
 
 
+/**
+ * Set scroller to a percentage position
+ * @param {Number} percent Percentage to scroll to
+ */
 Scroller.prototype._setMainScrollPercent = function(percent) {
   // Use this to calculate the new position of the main content
   this._scrollPosition = -1 * (Math.abs(this._scrollMax) / 100 * percent);
