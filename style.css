@@ -23,7 +23,7 @@ body {
   top: 5px;
   bottom: 5px;
   right: 5px;
-  background: rgba(0,0,0,0);
+  background: rgba(0,0,0,0.2);
   opacity: 0;
   -webkit-transition: opacity 200ms ease-in-out;
   -moz-transition: opacity 200ms ease-in-out;
@@ -45,5 +45,5 @@ body {
   border-radius: 3px;
   position: absolute;
   top: 0px;
-  background: rgba(0,0,0,0.8);
+  background: rgba(0,0,0,0.4);
 }

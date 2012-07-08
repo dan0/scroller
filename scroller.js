@@ -148,6 +148,9 @@ Scroller.prototype._bindEvents = function() {
   this._scroller.addEventListener('mousedown', function(e) {
     self._startDragScroller(e);
   }, false);
+  this._scrollbar.addEventListener('mousedown', function(e) {
+    self._handleBarClick(e);
+  }, false);
 };
 
 
@@ -200,6 +203,29 @@ Scroller.prototype._doMoveMouse = function() {
  */
 Scroller.prototype._endMoveMouse = function(e) {
   window.removeEventListener('mousemove', this.listener, false);
+};
+
+
+/**
+ * Handle click on scroller bar
+ * @param  {Event} e Click event
+ * @function
+ * @private
+ */
+Scroller.prototype._handleBarClick = function(e) {
+  e.preventDefault();
+  if (e.target !== this._scroller) {
+    var clickedPos = e.layerY || e.offsetY;
+    // set position to be halfway point of scroller
+    clickedPos  -= this._scroller.offsetHeight / 2;
+    // Percentage of scroller position in relation to total space
+    var percentageScrolled = clickedPos / this._scrollerSpace * 100;
+    // Use this to calculate the new position of the main content
+    this._scrollPosition = -1 * (Math.abs(this._scrollMax) / 100 * percentageScrolled);
+    // Run main scroll function
+    this._doScroll();
+    this._startDragScroller(e);
+  }
 };
 
 
