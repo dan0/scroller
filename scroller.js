@@ -188,10 +188,7 @@ Scroller.prototype._doMoveMouse = function() {
   this._scrollerAt = dY + this._startY;
   // Percentage of scroller position in relation to total space
   var percentageScrolled = this._scrollerAt / this._scrollerSpace * 100;
-  // Use this to calculate the new position of the main content
-  this._scrollPosition = -1 * (Math.abs(this._scrollMax) / 100 * percentageScrolled);
-  // Run main scroll function
-  this._doScroll();
+  this._setMainScrollPercent(percentageScrolled);
 };
 
 
@@ -220,12 +217,17 @@ Scroller.prototype._handleBarClick = function(e) {
     clickedPos  -= this._scroller.offsetHeight / 2;
     // Percentage of scroller position in relation to total space
     var percentageScrolled = clickedPos / this._scrollerSpace * 100;
-    // Use this to calculate the new position of the main content
-    this._scrollPosition = -1 * (Math.abs(this._scrollMax) / 100 * percentageScrolled);
-    // Run main scroll function
-    this._doScroll();
+    this._setMainScrollPercent(percentageScrolled);
     this._startDragScroller(e);
   }
+};
+
+
+Scroller.prototype._setMainScrollPercent = function(percent) {
+  // Use this to calculate the new position of the main content
+  this._scrollPosition = -1 * (Math.abs(this._scrollMax) / 100 * percent);
+  // Run main scroll function
+  this._doScroll();
 };
 
 
